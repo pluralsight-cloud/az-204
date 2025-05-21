@@ -18,66 +18,62 @@ namespace PS.MIP.SampleApp
         {
             #region USER_AUTHENTICATION_WITH_MS_ENTRA_ID
 
-            var app = PublicClientApplicationBuilder
-                .Create(_clientId)
-                .WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)
-                .WithRedirectUri("http://localhost")
-                .Build();
-            string[] authenticationScopes = { "user.read" };
-            AuthenticationResult result = await app.AcquireTokenInteractive(authenticationScopes).ExecuteAsync();
+            //var app = PublicClientApplicationBuilder
+            //    .Create(_clientId)
+            //    .WithAuthority(AzureCloudInstance.AzurePublic, _tenantId)
+            //    .WithRedirectUri("http://localhost")
+            //    .Build();
+            //string[] authenticationScopes = { "user.read" };
+            //AuthenticationResult result = await app.AcquireTokenInteractive(authenticationScopes)
+            //                                       .ExecuteAsync();
 
-            Console.WriteLine($"Token:\t{result.AccessToken}");
+            //Console.WriteLine($"Token:\t{result.IdToken}");
 
             #endregion USER_AUTHENTICATION_WITH_MS_ENTRA_ID
 
-
-
             #region MICROSOFT_GRAPH_INTEGRATION
 
-            var options = new InteractiveBrowserCredentialOptions
-            {
-                TenantId = _tenantId,
-                ClientId = _clientId,
-                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
-                RedirectUri = new Uri("http://localhost"),
-            };
+            //var options = new InteractiveBrowserCredentialOptions
+            //{
+            //    TenantId = _tenantId,
+            //    ClientId = _clientId,
+            //    AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+            //    RedirectUri = new Uri("http://localhost"),
+            //};
 
-            var interactiveCredential = new InteractiveBrowserCredential(options);
-            string[] graphScopes = { "user.read" };
-            var graphClient = new GraphServiceClient(interactiveCredential, graphScopes);
+            //var interactiveCredential = new InteractiveBrowserCredential(options);
+            //string[] graphScopes = { "user.read" };
+            //var graphClient = new GraphServiceClient(interactiveCredential, graphScopes);
 
-            var user = await graphClient.Me.GetAsync();
+            //var user = await graphClient.Me.GetAsync();
 
-            Console.WriteLine($"You display name in Microsoft Entra ID is: {user.DisplayName}");
-
-            Console.ReadKey();
+            //Console.WriteLine($"You display name in Microsoft Entra ID is: {user.DisplayName}");
 
             #endregion MICROSOFT_GRAPH_INTEGRATION
 
-
             #region AZURE_KEY_VAULT_INTEGRATION
 
-            var secretClient = new SecretClient(new Uri("key-vault-url"),
-                                          new ManagedIdentityCredential());
+            //var secretClient = new SecretClient(new Uri("key-vault-url"),
+            //                              new ManagedIdentityCredential());
 
-            await secretClient.SetSecretAsync("my-secret", "pluralsight-app-secret");
+            //await secretClient.SetSecretAsync("my-secret", "pluralsight-app-secret");
 
-            var secret = await secretClient.GetSecretAsync("my-secret");
+            //var secret = await secretClient.GetSecretAsync("my-secret");
 
-            Console.WriteLine($"Secret value: {secret.Value.Value}");
+            //Console.WriteLine($"Secret value: {secret.Value.Value}");
 
             #endregion
 
-
             #region AZURE_APP_CONFIGURATION_INTEGRATION
 
-            var configurationClient = new ConfigurationClient(new Uri("app-config-url"),
+            var configurationClient = new ConfigurationClient(new Uri("app-configuration-url"),
                                                               new ManagedIdentityCredential());
 
-            var setting = new ConfigurationSetting("MyApp:ProductsApi:Url", "https://sample-products-api.com");
+            var setting = new ConfigurationSetting("MyApp:ProductsApi:Url", "https://sample-product-api.com");
             configurationClient.SetConfigurationSetting(setting);
 
-            ConfigurationSetting existingConfig = configurationClient.GetConfigurationSetting("MyApp:ProductsApi:Url");
+            ConfigurationSetting existingConfig = configurationClient
+                                                        .GetConfigurationSetting("MyApp:ProductsApi:Url");
 
             setting.Label = "UAT";
             configurationClient.SetConfigurationSetting(setting);
@@ -89,8 +85,6 @@ namespace PS.MIP.SampleApp
             Console.WriteLine($"Configuration label: {existingConfig.Label}");
 
             #endregion AZURE_APP_CONFIGURATION_INTEGRATION
-
-
 
 
             Console.ReadKey();
